@@ -3,9 +3,18 @@
 
 <?php
 
+if ($_POST) {
+
+    $nombre = $_POST["nombre"];
+    $objConexion = new Conexion();
+    $sql = "INSERT INTO `proyectos` (`id`, `nombre`, `imagen`, `descripcion`) VALUES (NULL, '$nombre', 'imagen.jpg', 'Esto es un curso para frontend')";
+    $objConexion->ejecutar($sql);
+}
+
+// Haciendo un select a la tabla proyectos
 $objConexion = new Conexion();
-$sql = "INSERT INTO `proyectos` (`id`, `nombre`, `imagen`, `descripcion`) VALUES (NULL, 'Proyecto 1', 'imagen.jpg', 'Esto es un curso para frontend')";
-$objConexion->ejecutar($sql);
+$sql = "SELECT * FROM `proyectos`";
+$proyectos = $objConexion->consultar($sql);
 
 ?>
 
@@ -19,7 +28,7 @@ $objConexion->ejecutar($sql);
                     Datos del proyecto
                 </div>
                 <div class="card-body">
-                    <form action="portafolio.php" method="POST">
+                    <form action="portafolio.php" method="POST" enctype="multipart/form-data">
                         Nombre del proyecto <input class="form-control" type="text" name="nombre" id="">
                         <br>
                         Imagen del proyecto <input class="form-control" type="file" name="archivo" id="">
@@ -36,15 +45,21 @@ $objConexion->ejecutar($sql);
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Imagen</th>
+                        <th>Descripción</th>
+                        <th>Controles</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td scope="row"></td>
-                        <td>3</td>
-                        <td>Aplicacion web</td>
-                        <td>imagen.jpg</td>
-                    </tr>
+                    <!-- Recorre la variable proyectos, el cual es un select de la tabla proyectos -->
+                    <?php foreach ($proyectos as $proyecto) { ?>
+                        <tr>
+                            <td><?php echo $proyecto["id"]; ?></td>
+                            <td><?php echo $proyecto["nombre"]; ?></td>
+                            <td><?php echo $proyecto["imagen"]; ?></td>
+                            <td><?php echo $proyecto["descripcion"]; ?></td>
+                            <td><a class="btn btn-danger" href="#">Eliminar</a></td>
+                        </tr>
+                    <?php  } ?>
                 </tbody>
             </table>
         </div>
