@@ -6,8 +6,17 @@
 // INSERT
 if ($_POST) {
     $nombre = $_POST["nombre"];
-    $imagen = $_FILES["archivo"]["name"];
     $descripcion = $_POST["descripcion"];
+
+    //Obtenemos fecha
+    $fecha = new DateTime();
+    // Nombre de la imagen
+    $imagen = $fecha->getTimestamp() . "_" . $_FILES["archivo"]["name"];
+    // Imagen temporal
+    $imagen_temporal = $_FILES["archivo"]["tmp_name"];
+    // Mueve el archivo temporal a la carpeta imagenes (no olvidar dar permisos)
+    move_uploaded_file($imagen_temporal, "imagenes/" . $imagen);
+
     $objConexion = new Conexion();
     $sql = "INSERT INTO `proyectos` (`id`, `nombre`, `imagen`, `descripcion`) VALUES (NULL, '$nombre', '$imagen', '$descripcion')";
     $objConexion->ejecutar($sql);
@@ -17,6 +26,12 @@ if ($_POST) {
 if ($_GET) {
     $id = $_GET["borrar"];
     $objConexion = new Conexion();
+
+    // Obteniendo la imagen a eliminar con un select
+    $imagen = $objConexion->consultar("SELECT imagen FROM `proyectos` WHERE id=" . $id);
+    // Eliminar imagen con el metodo unlink
+    unlink("imagenes/" . $imagen[0]["imagen"]);
+    // Eliminar nombre de imagen de la tabla (ojo que es diferente a eliminar la imagen literalmente)
     $sql = "DELETE FROM `proyectos` WHERE `proyectos`.`id` =" . $id;
     $objConexion->ejecutar($sql);
 }
@@ -67,7 +82,7 @@ $proyectos = $objConexion->consultar($sql);
                         <tr>
                             <td><?php echo $proyecto["id"]; ?></td>
                             <td><?php echo $proyecto["nombre"]; ?></td>
-                            <td><?php echo $proyecto["imagen"]; ?></td>
+                            <td><img width="100" src="imagenes/<?php echo $proyecto["imagen"]; ?>" alt=""></td>
                             <td><?php echo $proyecto["descripcion"]; ?></td>
                             <td><a class="btn btn-danger" href="?borrar=<?php echo $proyecto["id"]; ?>">Eliminar</a></td>
                         </tr>
