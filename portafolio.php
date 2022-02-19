@@ -3,15 +3,25 @@
 
 <?php
 
+// INSERT
 if ($_POST) {
-
     $nombre = $_POST["nombre"];
+    $imagen = $_FILES["archivo"]["name"];
+    $descripcion = $_POST["descripcion"];
     $objConexion = new Conexion();
-    $sql = "INSERT INTO `proyectos` (`id`, `nombre`, `imagen`, `descripcion`) VALUES (NULL, '$nombre', 'imagen.jpg', 'Esto es un curso para frontend')";
+    $sql = "INSERT INTO `proyectos` (`id`, `nombre`, `imagen`, `descripcion`) VALUES (NULL, '$nombre', '$imagen', '$descripcion')";
     $objConexion->ejecutar($sql);
 }
 
-// Haciendo un select a la tabla proyectos
+// DELETE
+if ($_GET) {
+    $id = $_GET["borrar"];
+    $objConexion = new Conexion();
+    $sql = "DELETE FROM `proyectos` WHERE `proyectos`.`id` =" . $id;
+    $objConexion->ejecutar($sql);
+}
+
+// SELECT 
 $objConexion = new Conexion();
 $sql = "SELECT * FROM `proyectos`";
 $proyectos = $objConexion->consultar($sql);
@@ -32,6 +42,8 @@ $proyectos = $objConexion->consultar($sql);
                         Nombre del proyecto <input class="form-control" type="text" name="nombre" id="">
                         <br>
                         Imagen del proyecto <input class="form-control" type="file" name="archivo" id="">
+                        <br>
+                        <textarea class="form-control" name="descripcion" id="" cols="30" rows="3"></textarea>
                         <br>
                         <input class="btn btn-success" type="submit" value="Enviar proyecto">
                     </form>
@@ -57,7 +69,7 @@ $proyectos = $objConexion->consultar($sql);
                             <td><?php echo $proyecto["nombre"]; ?></td>
                             <td><?php echo $proyecto["imagen"]; ?></td>
                             <td><?php echo $proyecto["descripcion"]; ?></td>
-                            <td><a class="btn btn-danger" href="#">Eliminar</a></td>
+                            <td><a class="btn btn-danger" href="?borrar=<?php echo $proyecto["id"]; ?>">Eliminar</a></td>
                         </tr>
                     <?php  } ?>
                 </tbody>
