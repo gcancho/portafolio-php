@@ -11,6 +11,12 @@ if ($_POST) {
     }
 }
 
+// Para que una vez que este logueado no me permita dirigirme nuevamente a la vista de login
+if (isset($_SESSION["usuario"])) {
+    header("location: index.php");
+}
+
+
 ?>
 
 <!doctype html>
